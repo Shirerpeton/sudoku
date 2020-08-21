@@ -1,9 +1,20 @@
 import Head from 'next/head'
+import dynamic from "next/dynamic"
 import { useState } from 'react'
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components'
 import SudokuGrid from '../components/SudokuGrid.js'
 import ToggleMode from '../components/ToggleMode.js'
 import Controls from '../components/Controls.js'
+
+// const SudokuGrid = dynamic(() => import("../components/SudokuGrid.js"), {
+//   ssr: false,
+// });
+// const Controls = dynamic(() => import("../components/Controls.js"), {
+//    ssr: false,
+//  });
+//  const ToggleMode = dynamic(() => import("../components/ToggleMode.js"), {
+//    ssr: false,
+//  });
 
 const pxToVw = (size, width = 1024) => `${(size / width) * 100}vw`;
 
@@ -25,36 +36,10 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  html {
+    font-size: clamp(100%, 1rem + 2vw, 20px);
+  }
   
-  @media only screen and (max-width: 320px) {
-    html {
-      font-size: 10px;
-    }
-  }
-
-  @media only screen and (min-width: 320px) {
-    html {
-      font-size: ${pxToVw(12, 520)};
-    }
-  }
-
-  @media only screen and (min-width: 720px) {
-    html {
-      font-size: ${pxToVw(16, 872)};
-    }
-  }
-
-  @media only screen and (min-width: 1024px) {
-    html {
-      font-size: ${pxToVw(10)};
-    }
-  }
-
-  @media only screen and (min-width: 2160px) {
-    html {
-      font-size: ${pxToVw(9)};
-    }
-  }
 `
 
 const Container = styled.div`
@@ -77,15 +62,8 @@ const TopBar = styled.div`
   width: 100%;
   margin: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: end;
-`
-
-const ToggleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: center;
 `
 
 const Main = styled.main`
@@ -156,18 +134,17 @@ export default function Sudoku() {
 
   return (
     <Container lightMode={lightMode}>
-      <Head>
+      <Head >
         <title>Sudoku</title>
+        <meta name='description' content='Sudoku'/>
         <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=Lemon&display=swap" rel="stylesheet" />
         <link href="//db.onlinewebfonts.com/c/055d8bd397b68d5d121796f56b904640?family=Digital" rel="stylesheet" type="text/css" />
       </Head>
       <GlobalStyle />
-      <ThemeProvider theme={lightMode? lightTheme : darkTheme}>
+      <ThemeProvider theme={lightMode ? lightTheme : darkTheme}>
         <TopBar>
-          <ToggleContainer>
-            <ToggleMode lightMode={lightMode} setLightMode={setLightMode} />
-          </ToggleContainer>
+          <ToggleMode lightMode={lightMode} setLightMode={setLightMode} />
         </TopBar>
         <Main>
           <Title>Sudoku</Title>

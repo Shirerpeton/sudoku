@@ -34,6 +34,7 @@ const NumPad = styled.div`
 
 const Button = styled.button`
     text-align: center;
+    text-align-last:center;
     appearance: none;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -98,6 +99,17 @@ const SelectDiv = styled.div`
     }
 `
 
+const AccessLabel = styled.label`
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+`
+
 export default function Controls(props) {
     const handleClick = (key) => {
         return (() => {
@@ -146,6 +158,7 @@ export default function Controls(props) {
         const newGrid = stringToGrid(sudoku.generator.generate(difficulty));
         props.setGrid(newGrid);
         setTime(0);
+        setSolved(false);
     }
 
     const check = () => {
@@ -168,7 +181,10 @@ export default function Controls(props) {
 
     useEffect(() => {
         newGame();
-        setInterval(() => { if (!solvedRef.current) setTime(prevTime => prevTime + 1); }, 1000);
+        const interval = setInterval(() => { if (!solvedRef.current) setTime(prevTime => prevTime + 1); }, 1000);
+        return (() => {
+            clearInterval(interval);
+        });
     }, []);
 
     const range = [...Array(9).keys()].map(n => n + 1);
@@ -187,7 +203,7 @@ export default function Controls(props) {
             <Container>
                 <WideButton onClick={newGame}>New game</WideButton>
                 <SelectDiv>
-                    <WideButton as='select' name='difficulty' value={difficulty} onChange={e => setDifficulty(e.target.value)}>
+                    <WideButton id='difficultySelector' as='select' name='difficulty' value={difficulty} onChange={e => setDifficulty(e.target.value)}>
                         <option value='easy'>Easy</option>
                         <option value='medium'>Medium</option>
                         <option value='hard'>Hard</option>
@@ -195,6 +211,7 @@ export default function Controls(props) {
                         <option value='insane'>Insane</option>
                         <option value='inhuman'>Inhuman</option>
                     </WideButton>
+                    <AccessLabel htmlFor='difficultySelector'>Difficulty</AccessLabel>
                 </SelectDiv>
             </Container>
         </ControlsContainer>
